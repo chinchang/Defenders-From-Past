@@ -370,14 +370,15 @@ var turret_data = {
 var wave_data = [
 		{enemies: 2, speed: 20, interval: 2},	
 		{enemies: 10, speed: 30, interval: 2},	
-		{enemies: 10, speed: 30, interval: 2},	
-		{enemies: 20, speed: 40, interval: 2},	
-		{enemies: 20, speed: 40, interval: 2},	
-		{enemies: 10, speed: 40, interval: 2},	
-		{enemies: 10, speed: 45, interval: 1},	
-		{enemies: 10, speed: 45, interval: 1},	
-		{enemies: 10, speed: 45, interval: 1},	
-		{enemies: 10, speed: 45, interval: 1},	
+		{enemies: 20, speed: 30, interval: 1.5},	
+		{enemies: 20, speed: 40, interval: 1.2},	
+		{enemies: 25, speed: 40, interval: 1},	
+		{enemies: 20, speed: 40, interval: 1},	
+		{enemies: 20, speed: 45, interval: 1},	
+		{enemies: 20, speed: 45, interval: 1},	
+		{enemies: 20, speed: 45, interval: 1},	
+		{enemies: 25, speed: 45, interval: 1},	
+		{enemies: 25, speed: 50, interval: 0.5},	
 	],
 	current_wave = -1,
 	num_enemy = 0,
@@ -789,6 +790,7 @@ function onKeyPress(e){
 		current_wave++;
 		num_enemy = num_enemy_to_kill = wave_data[current_wave].enemies; console.log(num_enemy)
 		wave_text.visible = false;
+		// if(current_wave == 5) turret_data;
 	}
 }
 
