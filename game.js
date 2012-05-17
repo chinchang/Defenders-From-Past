@@ -143,6 +143,9 @@ Enemy.prototype.update = function(dt){
 		// if enemy reaches last point
 		if(!this.target_waypoint){
 			removeChild(this);
+			if(--num_enemy_to_kill === 0){
+				wave_text.visible = true;
+			}
 			health -= 1;
 			if(!health){
 				gameOver();
@@ -312,10 +315,11 @@ var PAUSE = true;
 
 var health = 6,
 	score = 0,
-	money = 100,
+	money = 250,
 	highscore = 0,
 	gameover_text = null,
 	start_button = null,
+	wave_text = null,
 	global_timer = 0;
 
 var ghost_turret,
@@ -360,14 +364,14 @@ var paths = [
 ]; 
 
 var turret_data = {
-	0: {image: 0, damage: -1, range: 100, cost: 50}
+	0: {image: 0, damage: -1, range: 100, cost: 100}
 };
 
 var wave_data = [
-		{enemies: 7, speed: 20, interval: 4},	
-		{enemies: 10, speed: 30, interval: 4},	
-		{enemies: 10, speed: 30, interval: 3},	
-		{enemies: 20, speed: 40, interval: 3},	
+		{enemies: 2, speed: 20, interval: 2},	
+		{enemies: 10, speed: 30, interval: 2},	
+		{enemies: 10, speed: 30, interval: 2},	
+		{enemies: 20, speed: 40, interval: 2},	
 		{enemies: 20, speed: 40, interval: 2},	
 		{enemies: 10, speed: 40, interval: 2},	
 		{enemies: 10, speed: 45, interval: 1},	
@@ -375,8 +379,9 @@ var wave_data = [
 		{enemies: 10, speed: 45, interval: 1},	
 		{enemies: 10, speed: 45, interval: 1},	
 	],
-	current_wave = 0,
-	num_enemy = 0;
+	current_wave = -1,
+	num_enemy = 0,
+	num_enemy_to_kill = 0;
 
 
 var enemy_interval = 3;
@@ -478,7 +483,19 @@ function initGame(){
 	}
 	addChild(gameover_text);
 
-	num_enemy = wave_data[current_wave].interval;
+	// wave start text
+	wave_text = new DisplayObject();
+	wave_text.x = 35;
+	wave_text.y = 324;
+	wave_text.visible = false;
+	wave_text.draw = function(context){
+		context.font = '18px Verdana';
+		context.fillStyle = 'rgb(255,255,255)';
+		context.fillText('Press SPACEBAR to bring on the next wave.', 0, 0);
+	}
+	addChild(wave_text);
+
+	// num_enemy = wave_data[current_wave].interval;
 }
 
 function createEnemy(){
@@ -571,12 +588,12 @@ function onStageUpdated(dt){
 	if(PAUSE) return;
 	global_timer += dt;
 
-	if(global_timer > wave_data[current_wave].interval){
+	if(num_enemy && global_timer > wave_data[current_wave].interval){
 		global_timer = 0;
 		createEnemy();
 		if(num_enemy-- == 0){
-			current_wave++;
-			num_enemy = wave_data[current_wave].enemies;
+			// current_wave++;
+			// num_enemy = wave_data[current_wave].enemies;
 		}
 
 	}
@@ -626,6 +643,9 @@ function onStageUpdated(dt){
 					removeChild(enemy);
 					money += 10;
 					score += 50;
+					if(--num_enemy_to_kill === 0){
+						wave_text.visible = true;
+					}
 				}
 				break;
 			}
@@ -760,9 +780,15 @@ function onKeyPress(e){
 	if({68:1,100:1}[e.which]){
 		debug ^= 1;
 	}
-	else if({88:1,120:1}[e.which]){
+	else if(PAUSE && {88:1,120:1}[e.which]){
 		removeChild(start_button);
 		PAUSE = false;
+		wave_text.visible = true;
+	}
+	else if({32:1}[e.which]){
+		current_wave++;
+		num_enemy = num_enemy_to_kill = wave_data[current_wave].enemies; console.log(num_enemy)
+		wave_text.visible = false;
 	}
 }
 
