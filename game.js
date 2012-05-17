@@ -1,11 +1,20 @@
 /*
-Copyright (c) 2012 Kushagra Gour (chinchang457@gmail.com)
+Copyright (c) 2012 Kushagra Gour (chinchang457@gmail.com), http://kushagragour.in
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and 
+associated documentation files (the "Software"), to deal in the Software without restriction, 
+including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, 
+subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in all copies or substantial 
+portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT 
+LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 ;(function(){
@@ -50,7 +59,7 @@ p.hitTestObject = function(obj){
 * @param	radius		radius of the placeholder
 **/
 var Turret = function (type){
-	this.reload_time = 1;
+	this.reload_time = 2;
 	this.range = 80;
 	this.local_time = 0;
 	this.type = type;
@@ -299,13 +308,14 @@ Waypoint.prototype.draw = function(context){
 /** 
 * Game properties
 **/
-var PAUSE = false;
+var PAUSE = true;
 
 var health = 6,
 	score = 0,
 	money = 100,
 	highscore = 0,
 	gameover_text = null,
+	start_button = null,
 	global_timer = 0;
 
 var ghost_turret,
@@ -444,10 +454,22 @@ function initGame(){
 	}
 	addChild(health_text);
 
+	// start button
+	start_button = new DisplayObject();
+	start_button.x = 20;
+	start_button.y = 280;
+	start_button.draw = function(context){
+		context.font = '60px Verdana';
+		context.fillStyle = 'rgb(0, 0, 0)';
+		context.fillText('Press X to play', 0, 0);
+	}
+
+	addChild(start_button);
+
 	// gameover text
 	gameover_text = new DisplayObject();
-	gameover_text.x = 50,
-	gameover_text.y = 254,
+	gameover_text.x = 50;
+	gameover_text.y = 254;
 	gameover_text.visible = false;
 	gameover_text.draw = function(context){
 		context.font = '30px Verdana';
@@ -738,6 +760,10 @@ function onKeyPress(e){
 	if({68:1,100:1}[e.which]){
 		debug ^= 1;
 	}
+	else if({88:1,120:1}[e.which]){
+		removeChild(start_button);
+		PAUSE = false;
+	}
 }
 
 /**
@@ -850,9 +876,7 @@ function draw(){
 }
 
 function clearScreen(context, color){
-    // context.fillStyle = color;
     context.clearRect(0, 0, canvas.width, canvas.height);
-    // context.fillRect(0, 0, canvas.width, canvas.height);
 }
 
 function addChild(c){
@@ -913,7 +937,6 @@ Rectangle.prototype.intersects = function(rect){
 		|| rect.x + rect.width < this.x
 		|| rect.y > this.y + this.height
 		|| rect.y + rect.height < this.y);
-		
 }
 
 function distance(x1, y1, x2, y2){
